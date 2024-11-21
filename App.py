@@ -1,6 +1,5 @@
 import ctypes
 import os
-import pyautogui
 import requests
 import subprocess
 import time

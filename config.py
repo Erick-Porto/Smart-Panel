@@ -1,5 +1,6 @@
 LINK_DRIVE="https://drive.google.com/drive/u/1/folders/1fPrFnbURqeJGgq0LcBexrruELP_JGu3W"
 WITH_SPOTIFY=True
+WITH_SKY=True
 
 """xpath"""
 SKY_LOGIN_INPUT='//*[@id="email"]'
