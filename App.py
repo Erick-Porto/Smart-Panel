@@ -118,7 +118,6 @@ class App(tk.Tk):
         except Exception as e:
             Utils.log(f"An error occurred while minimizing the application: {e}")
 
-
     #Function to open the settings file
     def on_configure(self):
         ctypes.windll.shell32.ShellExecuteW(None, "open", "notepad.exe", fr"C:\Programs Files(x86)\CFCSN\smart-panel\config.txt\config.py", None, 1)
@@ -127,7 +126,8 @@ class App(tk.Tk):
     def update_videos(self):
         if Utils.check_internet():
             if self.media_list_player.is_playing():
-                self.media_list_player.stop()
+                # self.media_list_player.stop()
+                print("stop video")
             self.load_media()
             try:
                 self.after(100, self.stop_video_and_update)
@@ -167,8 +167,6 @@ class App(tk.Tk):
                 del self._spotify
                 self.spotify()
                 
-
-            
     #TODO Function to refresh app NAO FUNCIONA
     def restart_app(self):
         self.destroy_app()
