@@ -99,7 +99,6 @@ class App(tk.Tk):
         menu.add_command(label="Configurações", command=self.on_configure)
         menu.add_separator()
         menu.add_command(label="Minimizar", command=self.on_minimize)
-        # menu.add_command(label="Reiniciar", command=self.restart_app)
         menu.add_command(label="Fechar", command=self.destroy_app)
         menu.post(event.x_root, event.y_root)
 
@@ -126,9 +125,9 @@ class App(tk.Tk):
     def update_videos(self):
         if Utils.check_internet():
             if self.media_list_player.is_playing():
-                # self.media_list_player.stop()
-                print("stop video")
-            self.load_media()
+                self.media_list_player.pause()
+                self.load_media(True)
+                self.media_list_player.release()
             try:
                 self.after(100, self.stop_video_and_update)
             except Exception as e:
@@ -140,10 +139,7 @@ class App(tk.Tk):
     #Function to stop de media player, delete all files in assets directory and download new medias from google drive.
     def stop_video_and_update(self, init=False):
         try:
-            try:
-                Utils.clear_folder('./_internal/assets')
-            except Exception as e:
-                Utils.log(f"An error occurred while cleaning the assets folder: {e}")
+            self.after(100, Utils.clear_folder('./_internal/assets'))
             download_folder(LINK_DRIVE, './_internal/assets')
             self.load_media(False)
             # if not init:
