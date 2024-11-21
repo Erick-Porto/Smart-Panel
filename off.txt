@@ -1,0 +1,71 @@
+def start_sky(self):
+        self.browser = Browser()
+        try:
+            self.error = False
+            sky_username = os.getenv("ACCOUNT_USERNAME")
+            sky_password = os.getenv("SKY_PASSWORD")
+            self.browser.open("https://www.skymais.com.br/acessar")
+            # time.sleep(5)
+            try:
+                self.browser.send(SKY_LOGIN_INPUT, sky_username)
+                self.browser.send(SKY_PASSWORD_INPUT, sky_password)
+                try:
+                    self.captcha_img = pyautogui.locateOnScreen('./_internal/src/screenshots/captcha.png')
+                    pyautogui.click(self.captcha_img)
+                    time.sleep(1)
+                    try:
+                        self.solver_img = pyautogui.locateOnScreen('./_internal/src/screenshots/solver.png')
+                        pyautogui.click(self.solver_img)
+                        time.sleep(3)
+                    except:
+                        self.isSolved = pyautogui.locateOnScreen('./_internal/src/screenshots/solved.png')
+                        if self.isSolved:
+                            Utils.log(f'An error occurred while Sky+ reCaptcha auto solve: Already solved.')
+                except Exception as e:
+                    self.error = True
+                    messagebox.showerror("FALHA NA AUTOMATIZAÇÃO.", "Houve uma falha na solução automática do Captcha, por favor realize o processo de logon manualmente.\nAo abrir o Captcha haverá um botão laranja no canto inferior esquerdo. Clique nele e o captcha será resolvido.")
+                    Utils.log(f"An error occurred while Sky+ reCaptcha auto solve: {e}")
+                if not self.error:
+                    self.browser.click(SKY_ACCESS_BUTTON)
+                    time.sleep(5)
+                    self.browser.click(SKY_ACCONUT_USER)
+                    time.sleep(1)
+                    self.browser.click(SKY_SPAM_CLOSE)
+                    self.browser.click(SKY_SPORTS_REF)
+            except Exception as e:
+                Utils.log(f"An error occurred while Sky+ login: {e}") 
+        except Exception as e:
+            Utils.log(f"An error occurred while opening the browser: {e}")
+
+    #TODO Function to construct a browser and logon in Spotify account.
+    def start_spotify(self):
+        try:
+            self.spotify_path = r'C:\Users\12029\AppData\Roaming\Spotify\Spotify.exe'
+            subprocess.Popen([self.spotify_path])
+            print('     =>   spotify aberto')
+        except Exception as e:
+            Utils.log(f'An error occurred while opening the spotify application: {e}')
+
+
+             def is_process_running(self, process_name):
+        try: 
+            tasklist_output = subprocess.getoutput('tasklist').split('\n')
+            for line in tasklist_output:
+                print(line)
+                if process_name in line:
+                    return True
+            return False
+        except Exception as e:
+            print(f"Erro ao verificar o processo {process_name}: {e}")
+            return False
+
+    #Function to check the spotify browser instance and opens it again if necessary or maximize the browser instance 
+    def open_spotify(self):
+        try:
+            if self.is_process_running("chromedriver.exe"):
+                self.on_minimize()
+                self.browser.maximize()
+            else:
+                self.start_spotify()
+        except Exception as e:
+            Utils.log(f"An error occurred while opening spotify: {e}")
