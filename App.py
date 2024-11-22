@@ -93,7 +93,7 @@ class App(tk.Tk):
             menu.add_command(label="Spotify", command=self.spotify)
         # if WITH_SKY:
             # menu.add_command(label="Sky+", command=self.start_sky)
-        if WITH_SPOTIFY or WITH_SKY:
+        # if WITH_SPOTIFY or WITH_SKY:
             menu.add_separator()
         menu.add_command(label="Atualizar Vídeos", command=self.update_videos)
         menu.add_command(label="Configurações", command=self.on_configure)
@@ -125,9 +125,9 @@ class App(tk.Tk):
     def update_videos(self):
         if Utils.check_internet():
             if self.media_list_player.is_playing():
-                self.media_list_player.pause()
-                self.load_media(True)
-                self.media_list_player.release()
+                if self.media_list_player.pause():
+                    self.load_media(True)
+                    self.media_list_player.release()
             try:
                 self.after(100, self.stop_video_and_update)
             except Exception as e:
