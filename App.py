@@ -49,9 +49,8 @@ class App(tk.Tk):
         self.media.place(x=0, y=0)
         self.media.pack()
         self.frame1.bind("<Button-3>", self.__context_menu)
-        self.load_media()
-        self.play()
-
+        if self.load_media(loading=True): self.play()
+        
     #Function to load media player with the videos in assets directory
     def load_media(self, loading=True):
         try:
@@ -65,6 +64,8 @@ class App(tk.Tk):
                 for video in self.videos:
                     self.media_list.add_media(self.instance.media_new(video))
                 self.media_list_player.set_media_list(self.media_list)
+            self.loaded = loading
+            return self.loaded
         except Exception as e:
             Utils.log(f"An error occurred while loading the media: {e}")
 
@@ -91,9 +92,6 @@ class App(tk.Tk):
         menu = tk.Menu(self, tearoff=0)
         if WITH_SPOTIFY:
             menu.add_command(label="Spotify", command=self.spotify)
-        # if WITH_SKY:
-            # menu.add_command(label="Sky+", command=self.start_sky)
-        # if WITH_SPOTIFY or WITH_SKY:
             menu.add_separator()
         menu.add_command(label="Atualizar Vídeos", command=self.update_videos)
         menu.add_command(label="Configurações", command=self.on_configure)
@@ -124,14 +122,11 @@ class App(tk.Tk):
     #Function to call a update list function using tkinter.after
     def update_videos(self):
         if Utils.check_internet():
-            if self.media_list_player.is_playing():
-                if self.media_list_player.pause():
-                    self.load_media(True)
-                    self.media_list_player.release()
-            try:
-                self.after(100, self.stop_video_and_update)
-            except Exception as e:
-                Utils.log(f"An error occurred while stop media player: {e}")
+            if self.load_media(loading=True):
+                try:
+                    self.after(10000, self.stop_video_and_update)
+                except Exception as e:
+                    Utils.log(f"An error occurred while stop media player: {e}")
         else:
             messagebox.showerror("Sem conexão com a internet", "Verifique sua conexão com a internet e tente novamente.\n"+
                                  "Se o problema persistir contacte o suporte.")
@@ -141,9 +136,9 @@ class App(tk.Tk):
         try:
             self.after(100, Utils.clear_folder('./_internal/assets'))
             download_folder(LINK_DRIVE, './_internal/assets')
-            self.load_media(False)
-            # if not init:
-            self.play()
+            if self.load_media(loading=False):
+                # if not init:
+                self.play()
         except Exception as e:
             Utils.log(f"An error occurred while updating assets data: {e}")
 
@@ -167,8 +162,6 @@ class App(tk.Tk):
     def restart_app(self):
         self.destroy_app()
         self.__init__()
-
-   
 
 if __name__ == "__main__":
     app = App()
